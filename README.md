@@ -2,18 +2,18 @@
 A python script which can enable efficiency mode for running processes in windows.
 
 # Note
-This program does not use methods such as the following;
-`start /belownormal "ProcessName" "path\to\executable.exe"`
-`Start-Process -FilePath "path\to\executable.exe" -WindowStyle Normal -Priority BelowNormal`
-`wmic process where name="processname.exe" CALL setpriority "below normal"`
+This program does not use methods such as the following;  
+`start /belownormal "ProcessName" "path\to\executable.exe"`  
+`Start-Process -FilePath "path\to\executable.exe" -WindowStyle Normal -Priority BelowNormal`  
+`wmic process where name="processname.exe" CALL setpriority "below normal"`  
 As far as I can tell such methods set or attempt to set the process priority which as far as I can see, is not the same thing as efficiency mode.
 If you look at the code, and (at least somewhat) know how to read it, you'll see clearly that the mechanism by which effieicncy mode is enabled for the processes is much more complex than a single command or line of code.
 
 # DISCLAIMERS
-Yes, this script was partly written by an AI. I know this is desplicable.
-No, I don't fully comprehend what it does ( I don't care to, because I dislike windows. )
-Most of the heavy lifting actually wasn't done by myself or AI, it was done by Matt_the_ok on a Microsoft owned forum. Below is the link to his code.
-https://learn.microsoft.com/en-us/answers/questions/2155580/how-do-i-force-a-python-script-to-run-in-efficienc
+Yes, this script was partly written by an AI. I know this is desplicable.  
+No, I don't fully comprehend what it does ( I don't care to, because I dislike windows. )  
+Most of the heavy lifting actually wasn't done by myself or AI, it was done by Matt_the_ok on a Microsoft owned forum. Below is the link to his code.  
+https://learn.microsoft.com/en-us/answers/questions/2155580/how-do-i-force-a-python-script-to-run-in-efficienc  
 I did not request permission from Matt_the_ok before using his code. Nor did I make any attempt at communication.
 
 # Features
