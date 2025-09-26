@@ -5,6 +5,7 @@ Based on Matt_the_ok's solution from Microsoft Q&A
 Set any Windows process to efficiency mode with green leaf indicator
 """
 
+import argparse
 import msvcrt
 import wmi
 import re
@@ -148,24 +149,8 @@ def set_processes_efficiency_mode(process_names):
     
     return results
 
-if __name__ == "__main__":
-    print("🍃 Efficiency Mode Module")
-    print("=" * 30)
-    
-    # Check admin status
-    try:
-        is_admin = ctypes.windll.shell32.IsUserAnAdmin()
-        if not is_admin:
-            print("⚠️  Warning: Not running as administrator")
-            print("Processes may not be able to be set to efficiency mode without admin privileges.")
-    except:
-        pass
-    
-    desired_processes = input("Enter what your processes (.exe only) are generally called: ")
-    if (len(desired_processes) == 0):
-        print("No input, exiting.")
-        quit()
-    expression_of_desired_processes = re.compile(desired_processes, re.ASCII | re.IGNORECASE)
+def main(input_processes):
+    expression_of_desired_processes = re.compile(input_processes, re.ASCII | re.IGNORECASE)
     list_of_desired_processes = []
 
     # initialize constructor
@@ -191,5 +176,38 @@ if __name__ == "__main__":
     if total_processes > 0: print(f"🏁 Successfully set {total_success}/{total_processes} processes to efficiency mode")
     else: print("🔍 No such processes found running")
 
-    print("Press any key to exit... ")
-    msvcrt.getch()
+if __name__ == "__main__":
+
+    par = argparse.ArgumentParser()
+    par.add_argument("-p", "--process", "--processes", 
+                     help="What your process(es) (.exe only) are generally called",
+                     nargs='+',
+                     default='',
+                     type=str)
+
+    parg = par.parse_args()
+
+    print("🍃 Efficiency Mode Module")
+    print("=" * 30)
+    
+    # Check admin status
+    try:
+        is_admin = ctypes.windll.shell32.IsUserAnAdmin()
+        if not is_admin:
+            print("⚠️  Warning: Not running as administrator")
+            print("Processes may not be able to be set to efficiency mode without admin privileges.")
+    except: pass
+
+    desired_processes = None
+    if parg.process: desired_processes = parg.process
+    else: desired_processes = input("Enter what your processes (.exe only) are generally called: ")
+
+    if desired_processes == None: quit()
+    if (len(desired_processes) == 0): print("No input, exiting."); quit()
+    
+    if type(desired_processes) == list:
+        for each_process_argument in desired_processes: main(each_process_argument)
+    else: 
+        main(desired_processes)
+        print("Press any key to exit... ")
+        msvcrt.getch()
