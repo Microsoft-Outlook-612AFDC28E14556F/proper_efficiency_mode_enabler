@@ -153,10 +153,9 @@ def main(input_processes):
     expression_of_desired_processes = re.compile(input_processes, re.ASCII | re.IGNORECASE)
     list_of_desired_processes = []
 
-    # initialize constructor
-    system_interface_contruct = wmi.WMI()
+    if parsed_arguments.fast == False: get_running_processes()
 
-    for each_process in system_interface_contruct.Win32_Process():
+    for each_process in the_running_processes:
         if ((expression_of_desired_processes.match(each_process.name) != None) and (".exe" in each_process.name)):
             if (each_process.name not in list_of_desired_processes): list_of_desired_processes.append(each_process.name)
     
@@ -176,16 +175,33 @@ def main(input_processes):
     if total_processes > 0: print(f"🏁 Successfully set {total_success}/{total_processes} processes to efficiency mode")
     else: print("🔍 No such processes found running")
 
+def get_running_processes():
+    global the_running_processes
+    # Initialize constructor and -
+    system_interface_contruct = wmi.WMI()
+    # - load list of running processes into memory.
+    the_running_processes = system_interface_contruct.Win32_Process()
+
+the_running_processes = []
+
 if __name__ == "__main__":
 
-    par = argparse.ArgumentParser()
-    par.add_argument("-p", "--process", "--processes", 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--process", "--processes", 
                      help="What your process(es) (.exe only) are generally called",
-                     nargs='+',
+                     nargs='+', # means this arg takes multiple inputs
                      default='',
                      type=str)
-
-    parg = par.parse_args()
+    parser.add_argument("-f", "--fast",
+                        help="Get process list only once, earlier in execution instead of getting process" \
+                             " list again & again every time an argument is processed. This may lead to higher" \
+                             " chance of missing processes/subprocesses especially just after bootup" \
+                             " for instance.",
+                        action=argparse.BooleanOptionalAction, # makes arg true if -f is present on the cli (no inputs)
+                        default=False,
+                        type=bool
+                        )
+    parsed_arguments = parser.parse_args()
 
     print("🍃 Efficiency Mode Module")
     print("=" * 30)
@@ -199,12 +215,14 @@ if __name__ == "__main__":
     except: pass
 
     desired_processes = None
-    if parg.process: desired_processes = parg.process
+    if parsed_arguments.process: desired_processes = parsed_arguments.process
     else: desired_processes = input("Enter what your processes (.exe only) are generally called: ")
 
     if desired_processes == None: quit()
     if (len(desired_processes) == 0): print("No input, exiting."); quit()
-    
+
+    if parsed_arguments.fast: get_running_processes()
+
     if type(desired_processes) == list:
         for each_process_argument in desired_processes: main(each_process_argument)
     else: 
